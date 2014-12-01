@@ -1,0 +1,13 @@
+1. Preprocess :
+  1.1 Remove duplicates
+  1.2 Make test data : about 20% randomly selected
+  1.3 Make a script for F1 score calculation on the dummy test data
+  1.4 What to do with code fragments? Examine structure of the data in general
+
+2. Methods to try :
+  2.1 Unsupervised LDA
+  2.2 Supervised LDA
+  2.3 One Vs All classification (as in winner's approach)
+
+3. Identify performance issues
+
