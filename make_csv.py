@@ -2,6 +2,7 @@ import csv
 from itertools import islice
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
+import time
 
 cachedStopWords = stopwords.words("english")
 cachedStopWords.append('what')
@@ -17,6 +18,8 @@ def line_stream(filename, stop=None):
 
 def main():
 	"""Make a CSV file out of training data of 1GB"""
+
+	t1 = time.time()	
 
 	filename = "Data/train-aa"
 	title_dict = {} # will use this to remove duplicates
@@ -54,6 +57,9 @@ def main():
 		writer = csv.writer(out_file, delimiter=',')
 		for row in csv_data:
 			writer.writerow(row)
+
+	t2 = time.time()
+	print "Time taken to clean data and make csv", t2-t1
 
 if __name__=="__main__" :
 	main()
