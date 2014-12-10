@@ -6,14 +6,16 @@ import random
 import time
 
 def make_coocurr_pairs(data):
+	t1 = time.time()
 	with open(r"Data/comb_titletag_20k2.csv", "w") as w:
 		for row in data:
-        		a=row[1]
+        		a=row[1] # post title
         		b=row[3]
 			#print a,b
 			for x, y in product(a.split(), b.split()):
                 		w.write("{},{}\n".format(x, y))
-
+	t2= time.time()
+	print "Time taken to make co occurrence pairs", t2-t1
 
 def make_train_test(test_percent):
 	t1 = time.time()
@@ -53,7 +55,7 @@ def make_freq_dict():
 '''
 counter = {}
 def make_count_dict():
-
+	t1 = time.time()
 	with open("Data/comb_titletag_20k2.csv",'rb') as file_name:
 		reader=csv.reader(file_name)
 		for row in reader:
@@ -68,8 +70,12 @@ def make_count_dict():
 				freq[word]+=1
 			else:
 				freq[word]=1
+	t2=time.time()
+	print "Time taken to make count/freq dicts", t2-t1
+
 
 def make_conf_supp_data():
+	t1 = time.time()
 	data = []
 	for item in counter.keys():
 		newlist = []
@@ -90,8 +96,12 @@ def make_conf_supp_data():
 		writer = csv.writer(w, delimiter=',')
 		for row in data:
 			writer.writerow(row)
+	t2=time.time()
+	print "Time taken to calculate confidence/support stats", t2-t1
+
 
 def pickle_conf_supp():
+	t1 = time.time()
 	conf_supp = {}
 	with open("Data/conf_supp_20k2.csv",'rb') as file_name:
                 reader=csv.reader(file_name)
@@ -105,7 +115,10 @@ def pickle_conf_supp():
 				conf_supp[word]=[]
 				conf_supp[word].append(wlist)			
 	pickle.dump(conf_supp, open("Data/conf_supp_20k2.p", "wb"))
-	#print conf_supp	
+	#print conf_supp
+	t2=time.time()
+	print "Time taken to pickle data", t2-t1	
+
 
 def get_top_10_words(tag):
 	""" get top 10 words associated with a tag """
@@ -127,6 +140,8 @@ def get_top_10_words(tag):
 
 def make_predictions(alpha, beta):
 	""" Assuming that the confidence and support data has been calculated from the training set, and pickled, and the testing data has been pickled, this function now makes tag predictions and writes them out into a csv file"""
+
+	t1 = time.time()
 
 	conf_supp = pickle.load(open("Data/conf_supp_20k2.p", "rb"))
 	test_data = pickle.load(open("Data/test_data_20k2.p", "rb"))
@@ -153,10 +168,16 @@ def make_predictions(alpha, beta):
                 writer = csv.writer(w, delimiter=',')
                 for row in results:
                         writer.writerow(row)
+	
+	t2 = time.time()
+	print "Time taken to make predictions - method 1",t2-t1	
+
 
 def make_predictions_2():
         """ Assuming that the confidence and support data has been calculated from the training set, and pickled, and the testing data has been pickled, this function now makes tag predictions and writes them out into a csv file"""
 	"""This method only uses confidence i.e. conditional probability, and simply outputs the tags having the highest conditional probabilities, compared for all the words in the title"""
+
+	t1 = time.time()
 
         conf_supp = pickle.load(open("Data/conf_supp_20k2.p", "rb"))
         test_data = pickle.load(open("Data/test_data_20k2.p", "rb"))
@@ -211,14 +232,17 @@ def make_predictions_2():
                 for row in results:
                         writer.writerow(row)
 
+	t2 = time.time()
+	print "Time taken to make predictions - method 2", t2-t1
+
 
 def main():
 	
 	#make_freq_dict()
-	'''	
-	test_data, train_data = make_train_test(25)
-	make_coocurr_pairs(train_data)
-	make_count_dict()
+		
+	test_data, train_data = make_train_test(25) # make train-test split with 25% test data
+	make_coocurr_pairs(train_data) 
+	make_count_dict() 
 	get_top_10_words("php")
         get_top_10_words("sql")
         get_top_10_words("java")
@@ -226,8 +250,8 @@ def main():
 	make_conf_supp_data()
         pickle_conf_supp() 
 	pickle.dump(test_data, open("Data/test_data_20k2.p", "wb"))	
-	'''
-	#make_predictions(0.5,5)
+	
+	make_predictions(0.5,5)
 	make_predictions_2()
 
 if __name__=="__main__" :
